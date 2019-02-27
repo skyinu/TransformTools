@@ -1,0 +1,27 @@
+apply plugin: 'groovy'
+buildscript {
+  repositories {
+    mavenCentral()
+    jcenter()
+    google()
+  }
+
+  dependencies {
+    classpath 'com.android.tools.build:gradle:3.3.1'
+  }
+}
+
+allprojects {
+  repositories {
+    mavenCentral()
+    jcenter()
+    google()
+  }
+}
+
+dependencies {
+  implementation gradleApi()
+  implementation localGroovy()
+  implementation 'com.android.tools.build:gradle:3.3.1'
+  implementation 'org.javassist:javassist:3.22.0-GA'
+}
