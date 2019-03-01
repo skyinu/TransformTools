@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-//apply plugin: 'com.skyinu.printexception'
+apply plugin: 'com.skyinu.printexception'
 
 android {
     compileSdkVersion 28
