@@ -1,6 +1,8 @@
 package com.skyinu.printexception
 
+import com.android.build.api.transform.DirectoryInput
 import com.android.build.api.transform.QualifiedContent
+import com.android.build.api.transform.Status
 import com.android.build.api.transform.Transform
 import com.android.build.api.transform.TransformException
 import com.android.build.api.transform.TransformInvocation
@@ -31,22 +33,40 @@ public class PrintExceptionTransform extends Transform {
             it.jarInputs.each {
                 File out = outputProvider.getContentLocation(it.name, it.contentTypes, it.scopes,
                         Format.JAR)
-                project.logger.error("input jar = " + it.file.absolutePath)
+                project.logger.error("input jar = " + it.file.path)
                 FileUtils.copyFile(it.file, out)
                 project.logger.error("add classPath = " + out.path)
                 assistHandler.insertClassPath(out.path)
             }
-            it.directoryInputs.each {
-                File out = outputProvider.getContentLocation(it.name, it.contentTypes, it.scopes,
-                        Format.DIRECTORY)
-                project.logger.error("input dir = " + it.file.absolutePath)
-                FileUtils.copyDirectory(it.file, out)
-                project.logger.error("add classPath = " + out.path)
-                assistHandler.insertClassPath(out.path)
-                assistHandler.handleDirectory(out)
-            }
+            handleDirectoryInputs(outputProvider, it.directoryInputs)
         }
         assistHandler.clear()
+    }
+
+    private void handleDirectoryInputs(TransformOutputProvider outputProvider,
+                                       Collection<DirectoryInput> directoryInputs){
+        directoryInputs.each {
+            DirectoryInput input = it
+            File out = outputProvider.getContentLocation(input.name, input.contentTypes,
+                    input.scopes, Format.DIRECTORY)
+            project.logger.error("input dir = " + input.file.path)
+            FileUtils.copyDirectory(input.file, out)
+            project.logger.error("add classPath = " + out.path)
+            assistHandler.insertClassPath(out.path)
+            if(input.changedFiles == null || input.changedFiles.isEmpty()){
+                assistHandler.handleDirectory(out)
+                return
+            }
+            input.changedFiles.keySet().each {
+                Status status = input.changedFiles.get(it, Status.ADDED)
+                switch (status){
+                    case Status.ADDED:
+                    case Status.CHANGED:
+                        project.logger.error("changed = " + it.path)
+                        assistHandler.handleFile(out, it)
+                }
+            }
+        }
     }
 
     @Override

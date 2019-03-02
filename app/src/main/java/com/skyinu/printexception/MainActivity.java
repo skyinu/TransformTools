@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.io.File;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -17,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -26,6 +27,36 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        catchTest();
+        catchTest2();
+    }
+
+    private String catchTest(){
+        try {
+            Object object = null;
+            return object.toString();
+        }catch (Exception ex){
+
+        }
+        return null;
+    }
+
+    private boolean catchTest2(){
+        try {
+            File file = null;
+            return file.delete();
+        }
+        catch (NullPointerException ex){
+            try {
+                String test = "3aaa1";
+                return Integer.parseInt(test) == 1;
+            }catch (Exception ignore){
+
+            }
+        } catch (Exception ex){
+
+        }
+        return true;
     }
 
     @Override
