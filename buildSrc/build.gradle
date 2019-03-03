@@ -1,4 +1,5 @@
 apply plugin: 'groovy'
+apply plugin: 'com.novoda.bintray-release'
 buildscript {
   repositories {
     mavenCentral()
@@ -8,6 +9,7 @@ buildscript {
 
   dependencies {
     classpath 'com.android.tools.build:gradle:3.3.1'
+    classpath 'com.novoda:bintray-release:0.9'
   }
 }
 
@@ -24,4 +26,13 @@ dependencies {
   implementation localGroovy()
   implementation 'com.android.tools.build:gradle:3.3.1'
   implementation 'org.javassist:javassist:3.24.1-GA'
+}
+
+publish {
+  userOrg = 'skyinu'
+  groupId = 'com.skyinu'
+  artifactId = 'printexception-plugin'
+  publishVersion = '0.0.1'
+  desc = 'a gradle plugin to add log to try catch expression'
+  website = "https://github.com/skyinu/PrintException"
 }
