@@ -44,6 +44,18 @@ printException{
             return null;
         }
     ```
+
+    为false表示输出完整log 并 可自定义log形式,此时需要添加一些配置
+
+        添加依赖
+
+        ```
+
+        ```
 ## publish
 
 ./gradlew clean build bintrayUpload -PbintrayUser=BINTRAY_USERNAME -PbintrayKey=BINTRAY_KEY -PdryRun=false
+
+## debug
+
+gradlew :app:assemble -Dorg.gradle.debug=true  --no-daemon

@@ -1,0 +1,19 @@
+apply plugin: 'java-library'
+apply plugin: 'com.novoda.bintray-release'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly 'com.google.android:android:4.1.1.4'
+    compileOnly 'com.android.support:support-annotations:28.0.0'
+}
+
+publish {
+    userOrg = 'skyinu'
+    groupId = 'com.skyinu'
+    artifactId = 'printexception'
+    publishVersion = '0.1.0'
+    desc = 'a plugin to help print log in try catch expression which injected by printexception gradle plugin'
+    website = "https://github.com/skyinu/PrintException"
+}
+sourceCompatibility = "7"
+targetCompatibility = "7"

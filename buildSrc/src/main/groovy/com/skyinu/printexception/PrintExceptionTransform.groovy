@@ -62,6 +62,7 @@ public class PrintExceptionTransform extends Transform {
                 assistHandler.insertClassPath(it.file.path)
             }
             it.directoryInputs.each {
+                //TODO incremental
                 DirectoryInput input = it
                 File out = outputProvider.getContentLocation(input.name, input.contentTypes,
                         input.scopes, Format.DIRECTORY)
@@ -93,22 +94,11 @@ public class PrintExceptionTransform extends Transform {
     private void handleDirectoryInputs(boolean  incremental,TransformOutputProvider outputProvider,
                                        Collection<DirectoryInput> directoryInputs){
         directoryInputs.each {
+            //TODO incremental
             DirectoryInput input = it
             File out = outputProvider.getContentLocation(input.name, input.contentTypes,
                     input.scopes, Format.DIRECTORY)
-            if(!incremental){
-                assistHandler.handleDirectory(out)
-                return
-            }
-            input.changedFiles.keySet().each {
-                Status status = input.changedFiles.get(it, Status.ADDED)
-                switch (status){
-                    case Status.ADDED:
-                    case Status.CHANGED:
-                        project.logger.error("changed = " + it.path)
-                        assistHandler.handleFile(out, it)
-                }
-            }
+            assistHandler.handleDirectory(out)
         }
     }
 

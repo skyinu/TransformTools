@@ -27,7 +27,7 @@ public class AssistHandler {
         this.classPaths = new ArrayList<>()
     }
 
-    public void init(PrintExceptionExtension exceptionExtension){
+    public void init(PrintExceptionExtension exceptionExtension) {
         this.exceptionExtension = exceptionExtension
     }
 
@@ -39,17 +39,17 @@ public class AssistHandler {
         }
     }
 
-    public void handleJarInput(File input, File dest){
+    public void handleJarInput(File input, File dest) {
         project.logger.error("input jar = " + input.path)
         ZipFile inputJar = new ZipFile(input)
         Enumeration<ZipEntry> zipEntries = inputJar.entries()
-        if(!exceptionExtension.injectJar || zipEntries == null || !zipEntries.hasMoreElements()){
+        if (!exceptionExtension.injectJar || zipEntries == null || !zipEntries.hasMoreElements()) {
             FileUtils.copyFile(input, dest)
             return
         }
         ZipOutputStream zipOutputJar = new ZipOutputStream(new FileOutputStream(dest))
         zipOutputJar.setComment(inputJar.comment)
-        while (zipEntries.hasMoreElements()){
+        while (zipEntries.hasMoreElements()) {
             ZipEntry inputJarEntry = zipEntries.nextElement()
             String entryName = inputJarEntry.getName()
             String className = Utils.retrieveClassNameForJarClass(entryName)
@@ -61,11 +61,11 @@ public class AssistHandler {
                 zipOutputJar.closeEntry()
                 continue
             }
-            if(ctClass.isFrozen()){
+            if (ctClass.isFrozen()) {
                 ctClass.defrost()
             }
-            CtMethod []ctMethods = ctClass.getDeclaredMethods()
-            if(ctMethods == null || ctMethods.length <=0){
+            CtMethod[] ctMethods = ctClass.getDeclaredMethods()
+            if (ctMethods == null || ctMethods.length <= 0) {
                 writeEntryData(inputJar, inputJarEntry, zipOutputJar)
                 zipOutputJar.closeEntry()
                 continue
@@ -83,15 +83,15 @@ public class AssistHandler {
     }
 
     private void writeEntryData(ZipFile inputJar, ZipEntry inputJarEntry,
-                                ZipOutputStream outputStream){
+                                ZipOutputStream outputStream) {
         try {
             InputStream jarIns = inputJar.getInputStream(inputJarEntry)
             byte[] buffer = new byte[1024]
             int len
-            while ((len = jarIns.read(buffer)) != -1){
+            while ((len = jarIns.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, len)
             }
-        }catch(IOException ex){
+        } catch (IOException ex) {
             project.logger.error(inputJarEntry.name + " => error: " + ex)
         }
     }
@@ -110,23 +110,23 @@ public class AssistHandler {
         CtClass ctClass = classPool.getOrNull(className)
         if (ctClass == null) {
             File parent = input.parentFile
-            while (parent != null && parent.exists()){
+            while (parent != null && parent.exists()) {
                 className = Utils.retrieveClassName(input, parent)
                 ctClass = classPool.getOrNull(className)
-                if (ctClass != null){
+                if (ctClass != null) {
                     break
                 }
                 parent = parent.parentFile
             }
-            if(ctClass == null) {
+            if (ctClass == null) {
                 return
             }
         }
-        if(ctClass.isFrozen()){
+        if (ctClass.isFrozen()) {
             ctClass.defrost()
         }
-        CtMethod []ctMethods = ctClass.getDeclaredMethods()
-        if(ctMethods == null || ctMethods.length <=0){
+        CtMethod[] ctMethods = ctClass.getDeclaredMethods()
+        if (ctMethods == null || ctMethods.length <= 0) {
             return
         }
         ctMethods.each {
@@ -142,30 +142,41 @@ public class AssistHandler {
                 super.edit(handler)
                 try {
                     handler.insertBefore(buildExceptionLog(handler))
-                }catch(Exception ex){
-                    project.logger.error(handler.fileName +" inject error = " + ex.message)
+                } catch (Exception ex) {
+                    project.logger.error(handler.fileName + " inject error = " + ex.message)
                 }
             }
         })
     }
 
-    private String buildExceptionLog(Handler handler){
-        StringBuilder builder = new StringBuilder(Const.LOG_CLASS)
-        builder.append(".e")
-        .append("(")
-        .append("\"")
-        .append(exceptionExtension.exceptionTag)
-        .append("\"")
-        .append(",")
-        if(exceptionExtension.plain){
-            builder.append("\"")
-            builder.append(handler.fileName)
-            .append("->")
-            .append(handler.where().name)
-            .append("->")
-            .append("\"+")
-            .append("\$1.getMessage()")
-            .append(");")
+    private String buildExceptionLog(Handler handler) {
+        StringBuilder builder
+        if (exceptionExtension.plain) {
+            builder = new StringBuilder(Const.LOG_CLASS)
+            builder.append(".e")
+                    .append("(")
+                    .append("\"")
+                    .append(exceptionExtension.exceptionTag)
+                    .append("\"")
+                    .append(",")
+                    .append("\"")
+                    .append(handler.fileName)
+                    .append("->")
+                    .append(handler.where().name)
+                    .append("->")
+                    .append("\"+")
+                    .append("\$1.getMessage()")
+                    .append(");")
+        } else {
+            builder = new StringBuilder(Const.LIB_LOG_CLASS)
+            builder.append(".onCatchEvent")
+                    .append("(")
+                    .append("\"")
+                    .append(exceptionExtension.exceptionTag)
+                    .append("\"")
+                    .append(",")
+                    .append("\$1")
+                    .append(");")
         }
         return builder.toString()
     }
