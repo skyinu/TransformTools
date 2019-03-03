@@ -1,6 +1,7 @@
 package com.skyinu.printexception
 
 import com.android.build.api.transform.DirectoryInput
+import com.android.build.api.transform.JarInput
 import com.android.build.api.transform.QualifiedContent
 import com.android.build.api.transform.Status
 import com.android.build.api.transform.Transform
@@ -11,6 +12,7 @@ import com.android.build.api.transform.Format
 import com.android.build.gradle.LibraryPlugin;
 import com.android.build.gradle.internal.pipeline.TransformManager;
 import com.google.common.collect.ImmutableSet
+import javassist.CtClass
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project;
 
@@ -27,23 +29,52 @@ public class PrintExceptionTransform extends Transform {
     @Override
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
         super.transform(transformInvocation)
+        PrintExceptionExtension callExtension = project.extensions.
+                findByName(PrintExceptionExtension.DSL_DOMAIN_NAME)
+        if(callExtension.dumpAble){
+            CtClass.debugDump = callExtension.dumpDir
+        }
         assistHandler.insertClassPath(project.android.bootClasspath[0].toString())
         TransformOutputProvider outputProvider = transformInvocation.outputProvider
-        transformInvocation.inputs.each {
-            it.jarInputs.each {
-                File out = outputProvider.getContentLocation(it.name, it.contentTypes, it.scopes,
-                        Format.JAR)
-                project.logger.error("input jar = " + it.file.path)
-                FileUtils.copyFile(it.file, out)
-                project.logger.error("add classPath = " + out.path)
-                assistHandler.insertClassPath(out.path)
+        if (!transformInvocation.isIncremental()) {
+            outputProvider.deleteAll()
+        }
+        try {
+            transformInvocation.inputs.each {
+                handleJarInputs(transformInvocation.isIncremental(), outputProvider, it.jarInputs)
+                handleDirectoryInputs(transformInvocation.isIncremental(),
+                        outputProvider, it.directoryInputs)
             }
-            handleDirectoryInputs(outputProvider, it.directoryInputs)
+        }catch(Exception ex){
+            project.logger.error(ex.message)
         }
         assistHandler.clear()
+        CtClass.debugDump = null
     }
 
-    private void handleDirectoryInputs(TransformOutputProvider outputProvider,
+    private void handleJarInputs(boolean  incremental,TransformOutputProvider outputProvider,
+                                 Collection<JarInput> jarInputs){
+        jarInputs.each {
+            JarInput input = it
+            File out = outputProvider.getContentLocation(input.name, input.contentTypes,
+                    input.scopes, Format.JAR)
+            project.logger.error("input jar = " + input.file.path)
+//            FileUtils.copyFile(input.file, out)
+            assistHandler.insertClassPath(input.file.path)
+            project.logger.error("add classPath = " + out.path)
+            if(!incremental){
+                assistHandler.handleJarInput(input.file, out)
+                return
+            }
+            switch (it.status){
+                case Status.CHANGED:
+                case Status.ADDED:
+                    assistHandler.handleJarInput(input.file, out)
+            }
+        }
+    }
+
+    private void handleDirectoryInputs(boolean  incremental,TransformOutputProvider outputProvider,
                                        Collection<DirectoryInput> directoryInputs){
         directoryInputs.each {
             DirectoryInput input = it
@@ -53,7 +84,7 @@ public class PrintExceptionTransform extends Transform {
             FileUtils.copyDirectory(input.file, out)
             project.logger.error("add classPath = " + out.path)
             assistHandler.insertClassPath(out.path)
-            if(input.changedFiles == null || input.changedFiles.isEmpty()){
+            if(!incremental){
                 assistHandler.handleDirectory(out)
                 return
             }

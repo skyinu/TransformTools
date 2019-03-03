@@ -11,6 +11,7 @@ public class PrintExceptionPlugin implements Plugin<Project> {
         if (!(project.plugins.hasPlugin(LibraryPlugin) || project.plugins.hasPlugin(AppPlugin))) {
             throw new IllegalStateException('plugin can only be applied to android projects')
         }
+        project.extensions.create(PrintExceptionExtension.DSL_DOMAIN_NAME, PrintExceptionExtension)
         project.android.registerTransform(new PrintExceptionTransform(project))
     }
 }
