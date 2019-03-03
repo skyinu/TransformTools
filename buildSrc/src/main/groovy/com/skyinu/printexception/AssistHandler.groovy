@@ -17,13 +17,18 @@ import java.util.zip.ZipOutputStream
 
 public class AssistHandler {
     private Project project
-    private ClassPool classPool;
-    private List<ClassPath> classPaths;
+    private ClassPool classPool
+    private List<ClassPath> classPaths
+    private PrintExceptionExtension exceptionExtension
 
     public AssistHandler(Project project) {
         this.project = project
         this.classPool = new ClassPool(true)
         this.classPaths = new ArrayList<>()
+    }
+
+    public void init(PrintExceptionExtension exceptionExtension){
+        this.exceptionExtension = exceptionExtension
     }
 
     public void insertClassPath(String classPath) {
@@ -35,9 +40,10 @@ public class AssistHandler {
     }
 
     public void handleJarInput(File input, File dest){
+        project.logger.error("input jar = " + input.path)
         ZipFile inputJar = new ZipFile(input)
         Enumeration<ZipEntry> zipEntries = inputJar.entries()
-        if(zipEntries == null || !zipEntries.hasMoreElements()){
+        if(!exceptionExtension.injectJar || zipEntries == null || !zipEntries.hasMoreElements()){
             FileUtils.copyFile(input, dest)
             return
         }
@@ -55,14 +61,12 @@ public class AssistHandler {
                 zipOutputJar.closeEntry()
                 continue
             }
-            project.logger.error("handle class in jar = " + entryName)
             if(ctClass.isFrozen()){
                 ctClass.defrost()
             }
             CtMethod []ctMethods = ctClass.getDeclaredMethods()
             if(ctMethods == null || ctMethods.length <=0){
-                byte[] data = ctClass.toBytecode()
-                zipOutputJar.write(data)
+                writeEntryData(inputJar, inputJarEntry, zipOutputJar)
                 zipOutputJar.closeEntry()
                 continue
             }
@@ -136,9 +140,34 @@ public class AssistHandler {
             @Override
             void edit(Handler handler) throws CannotCompileException {
                 super.edit(handler)
-                handler.insertBefore("android.util.Log.e(\"TAG1\", \$1.toString());")
+                try {
+                    handler.insertBefore(buildExceptionLog(handler))
+                }catch(Exception ex){
+                    project.logger.error(handler.fileName +" inject error = " + ex.message)
+                }
             }
         })
+    }
+
+    private String buildExceptionLog(Handler handler){
+        StringBuilder builder = new StringBuilder(Const.LOG_CLASS)
+        builder.append(".e")
+        .append("(")
+        .append("\"")
+        .append(exceptionExtension.exceptionTag)
+        .append("\"")
+        .append(",")
+        if(exceptionExtension.plain){
+            builder.append("\"")
+            builder.append(handler.fileName)
+            .append("->")
+            .append(handler.where().name)
+            .append("->")
+            .append("\"+")
+            .append("\$1.getMessage()")
+            .append(");")
+        }
+        return builder.toString()
     }
 
     public void clear() {

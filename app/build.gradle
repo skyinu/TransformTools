@@ -32,4 +32,6 @@ dependencies {
 printException{
     dumpAble true
     dumpDir "${project.buildDir}${File.separator}dumpDir"
+    exceptionTag  "error"
+    plain true
 }

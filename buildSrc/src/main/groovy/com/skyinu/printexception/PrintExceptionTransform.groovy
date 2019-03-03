@@ -34,12 +34,14 @@ public class PrintExceptionTransform extends Transform {
         if(callExtension.dumpAble){
             CtClass.debugDump = callExtension.dumpDir
         }
+        assistHandler.init(callExtension)
         assistHandler.insertClassPath(project.android.bootClasspath[0].toString())
         TransformOutputProvider outputProvider = transformInvocation.outputProvider
         if (!transformInvocation.isIncremental()) {
             outputProvider.deleteAll()
         }
         try {
+            collectClassPath(transformInvocation, outputProvider)
             transformInvocation.inputs.each {
                 handleJarInputs(transformInvocation.isIncremental(), outputProvider, it.jarInputs)
                 handleDirectoryInputs(transformInvocation.isIncremental(),
@@ -52,16 +54,30 @@ public class PrintExceptionTransform extends Transform {
         CtClass.debugDump = null
     }
 
+    private void collectClassPath(TransformInvocation transformInvocation,
+                                  TransformOutputProvider outputProvider){
+        transformInvocation.inputs.each {
+            it.jarInputs.each {
+                project.logger.error("add classPath = " + it.file.path)
+                assistHandler.insertClassPath(it.file.path)
+            }
+            it.directoryInputs.each {
+                DirectoryInput input = it
+                File out = outputProvider.getContentLocation(input.name, input.contentTypes,
+                        input.scopes, Format.DIRECTORY)
+                FileUtils.copyDirectory(input.file, out)
+                project.logger.error("add classPath = " + out.path)
+                assistHandler.insertClassPath(out.path)
+            }
+        }
+    }
+
     private void handleJarInputs(boolean  incremental,TransformOutputProvider outputProvider,
                                  Collection<JarInput> jarInputs){
         jarInputs.each {
             JarInput input = it
             File out = outputProvider.getContentLocation(input.name, input.contentTypes,
                     input.scopes, Format.JAR)
-            project.logger.error("input jar = " + input.file.path)
-//            FileUtils.copyFile(input.file, out)
-            assistHandler.insertClassPath(input.file.path)
-            project.logger.error("add classPath = " + out.path)
             if(!incremental){
                 assistHandler.handleJarInput(input.file, out)
                 return
@@ -80,10 +96,6 @@ public class PrintExceptionTransform extends Transform {
             DirectoryInput input = it
             File out = outputProvider.getContentLocation(input.name, input.contentTypes,
                     input.scopes, Format.DIRECTORY)
-            project.logger.error("input dir = " + input.file.path)
-            FileUtils.copyDirectory(input.file, out)
-            project.logger.error("add classPath = " + out.path)
-            assistHandler.insertClassPath(out.path)
             if(!incremental){
                 assistHandler.handleDirectory(out)
                 return
