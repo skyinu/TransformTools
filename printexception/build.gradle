@@ -11,7 +11,7 @@ publish {
     userOrg = 'skyinu'
     groupId = 'com.skyinu'
     artifactId = 'printexception'
-    publishVersion = '0.1.0'
+    publishVersion = '0.1.1'
     desc = 'a plugin to help print log in try catch expression which injected by printexception gradle plugin'
     website = "https://github.com/skyinu/PrintException"
 }

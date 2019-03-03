@@ -49,9 +49,13 @@ printException{
 
         添加依赖
 
+        ```groovy
+        compile 'com.skyinu:printexception:0.1.1'
         ```
 
-        ```
+        这样就可以支持打印完整log了, 如果想自定义,调用方法`com.skyinu.printexception.LogPrinter.setEventListenter`
+        传入自己的event listener即可
+
 ## publish
 
 ./gradlew clean build bintrayUpload -PbintrayUser=BINTRAY_USERNAME -PbintrayKey=BINTRAY_KEY -PdryRun=false
@@ -59,3 +63,7 @@ printException{
 ## debug
 
 gradlew :app:assemble -Dorg.gradle.debug=true  --no-daemon
+
+## extra
+
+if you occur exception when clean project, you can run `gradlew --stop` then retry
