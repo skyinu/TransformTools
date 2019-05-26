@@ -1,4 +1,4 @@
-package com.skyinu.printexception
+package com.skyinu.wardhere
 
 import com.android.build.api.transform.DirectoryInput
 import com.android.build.api.transform.JarInput
@@ -58,7 +58,6 @@ public class PrintExceptionTransform extends Transform {
                                   TransformOutputProvider outputProvider){
         transformInvocation.inputs.each {
             it.jarInputs.each {
-                project.logger.error("add classPath = " + it.file.path)
                 assistHandler.insertClassPath(it.file.path)
             }
             it.directoryInputs.each {
@@ -67,7 +66,6 @@ public class PrintExceptionTransform extends Transform {
                 File out = outputProvider.getContentLocation(input.name, input.contentTypes,
                         input.scopes, Format.DIRECTORY)
                 FileUtils.copyDirectory(input.file, out)
-                project.logger.error("add classPath = " + out.path)
                 assistHandler.insertClassPath(out.path)
             }
         }
@@ -104,7 +102,7 @@ public class PrintExceptionTransform extends Transform {
 
     @Override
     public String getName() {
-        return "printException"
+        return "wardhere"
     }
 
     @Override
@@ -115,7 +113,7 @@ public class PrintExceptionTransform extends Transform {
     @Override
     public Set<? super QualifiedContent.Scope> getScopes() {
         if (project.getPlugins().hasPlugin(LibraryPlugin.class)) {
-            return ImmutableSet.of(QualifiedContent.Scope.PROJECT)
+            return QualifiedContent.Scope.PROJECT
         }
         return TransformManager.SCOPE_FULL_PROJECT
     }

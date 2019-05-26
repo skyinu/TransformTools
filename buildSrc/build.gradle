@@ -31,7 +31,7 @@ dependencies {
 publish {
   userOrg = 'skyinu'
   groupId = 'com.skyinu'
-  artifactId = 'printexception-plugin'
+  artifactId = 'wardhere-plugin'
   publishVersion = '0.1.1'
   desc = 'a gradle plugin to add log to try catch expression'
   website = "https://github.com/skyinu/PrintException"

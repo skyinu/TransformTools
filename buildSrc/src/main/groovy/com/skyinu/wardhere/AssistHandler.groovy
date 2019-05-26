@@ -1,4 +1,4 @@
-package com.skyinu.printexception
+package com.skyinu.wardhere
 
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
@@ -40,7 +40,6 @@ public class AssistHandler {
     }
 
     public void handleJarInput(File input, File dest) {
-        project.logger.error("input jar = " + input.path)
         ZipFile inputJar = new ZipFile(input)
         Enumeration<ZipEntry> zipEntries = inputJar.entries()
         if (!exceptionExtension.injectJar || zipEntries == null || !zipEntries.hasMoreElements()) {
@@ -56,7 +55,6 @@ public class AssistHandler {
             CtClass ctClass = classPool.getOrNull(className)
             zipOutputJar.putNextEntry(new ZipEntry(inputJarEntry.name))
             if (ctClass == null) {
-                project.logger.error("can't find class in jar = " + entryName)
                 writeEntryData(inputJar, inputJarEntry, zipOutputJar)
                 zipOutputJar.closeEntry()
                 continue
@@ -97,6 +95,7 @@ public class AssistHandler {
     }
 
     public void handleDirectory(File input) {
+        project.logger.error("input directory = " + input.absolutePath)
         input.eachFileRecurse {
             handleFile(input, it)
         }
@@ -143,7 +142,9 @@ public class AssistHandler {
                 try {
                     handler.insertBefore(buildExceptionLog(handler))
                 } catch (Exception ex) {
-                    project.logger.error(handler.fileName + " inject error = " + ex.message)
+                    if(ex.message != null) {
+                        project.logger.error(handler.fileName + " inject error = " + ex.message)
+                    }
                 }
             }
         })

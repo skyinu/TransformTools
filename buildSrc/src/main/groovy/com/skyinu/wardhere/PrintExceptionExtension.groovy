@@ -1,4 +1,4 @@
-package com.skyinu.printexception
+package com.skyinu.wardhere
 
 public class PrintExceptionExtension {
   public static final String DSL_DOMAIN_NAME = "printException"

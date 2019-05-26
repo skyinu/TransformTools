@@ -1,4 +1,4 @@
-package com.skyinu.printexception;
+package com.skyinu.wardhere;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
