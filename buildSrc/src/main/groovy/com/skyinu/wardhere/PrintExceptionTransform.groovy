@@ -10,8 +10,7 @@ import com.android.build.api.transform.TransformInvocation
 import com.android.build.api.transform.TransformOutputProvider
 import com.android.build.api.transform.Format
 import com.android.build.gradle.LibraryPlugin;
-import com.android.build.gradle.internal.pipeline.TransformManager;
-import com.google.common.collect.ImmutableSet
+import com.android.build.gradle.internal.pipeline.TransformManager
 import javassist.CtClass
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project;
@@ -29,8 +28,8 @@ public class PrintExceptionTransform extends Transform {
     @Override
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
         super.transform(transformInvocation)
-        PrintExceptionExtension callExtension = project.extensions.
-                findByName(PrintExceptionExtension.DSL_DOMAIN_NAME)
+        WardHereExtension callExtension = project.extensions.
+                findByName(WardHereExtension.DSL_DOMAIN_NAME)
         if(callExtension.dumpAble){
             CtClass.debugDump = callExtension.dumpDir
         }
