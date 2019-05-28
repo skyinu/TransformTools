@@ -5,6 +5,8 @@
 PrintCatch目标是向project中所有的source code、jar中的try catch代码块中的catch代码块插入log,用于解决代码执行时
 错误意外被try catch导致问题难以定位的问题,插入log后可以方便观察运行时的exception情况
 
+再次基础上增加了想指定类特定行插入代码的功能
+
 ## Usage
 
 add classpath
@@ -22,12 +24,23 @@ apply plugin: 'com.skyinu.printexception'
 configuration
 
 ```groovy
-printException{
+wardHere{
     dumpAble true //whether dump the modified class file
     dumpDir "${project.buildDir}${File.separator}dumpDir" //the directory to dump the modified class file
     exceptionTag  "error" //the log tag use to print exception log
     plain true
     injectJar true//whether inject log to jar dependencies
+    injectCode {
+        classPath = "com.skyinu.wardhere.MainActivity"
+        lineNumber = 25
+        code =  "android.util.Log.e(\"tag\", \"error \" + \"tag\");"
+      }
+
+      injectCode {
+        classPath = "com.skyinu.wardhere.MainActivity"
+        lineNumber = 37
+        code =  "android.util.Log.e(\"tag\", \"37 \" + \"tag\");"
+      }
 }
 ```
 
