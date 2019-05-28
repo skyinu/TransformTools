@@ -202,7 +202,7 @@ public class AssistHandler {
     try {
       CtClass declaringClass = ctMethod.getDeclaringClass()
       String parentClassName = declaringClass.getName()
-      int innerPos = parentClassName.lastIndexOf("\$")
+      int innerPos = parentClassName.indexOf("\$")
       if (innerPos > 0) {
         parentClassName = parentClassName.substring(0, innerPos)
       }
