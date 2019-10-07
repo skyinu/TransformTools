@@ -14,13 +14,14 @@ buildscript {
   }
 }
 
-allprojects {
-  repositories {
-    maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-    mavenCentral()
-    jcenter()
-    google()
+repositories {
+  maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+  mavenCentral()
+  jcenter()
+  maven {
+    url 'https://dl.bintray.com/skyinu/maven'
   }
+  google()
 }
 
 dependencies {
@@ -28,6 +29,7 @@ dependencies {
   implementation localGroovy()
   implementation 'com.android.tools.build:gradle:3.3.1'
   implementation 'org.javassist:javassist:3.24.1-GA'
+  implementation 'com.skyinu.transformtools:basetranfrom:0.0.3'
 }
 
 publish {
