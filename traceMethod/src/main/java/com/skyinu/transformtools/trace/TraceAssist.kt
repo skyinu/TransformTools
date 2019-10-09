@@ -14,24 +14,32 @@ import javassist.expr.NewArray
 
 class TraceAssist : ClassHandler {
   companion object {
-    const val TRACE_START = "android.os.Trace.beginSection(\"\\s\");\n"
+    const val TRACE_START = "android.os.Trace.beginSection(\"%s\");\n"
     const val TRACE_END = "android.os.Trace.endSection();\n"
   }
 
   override fun travelClass(ctClass: CtClass): Boolean {
+    if (ctClass.isInterface) {
+      return false
+    }
     val methods = ctClass.declaredMethods
     var handled = false
     methods.filter {
-      it.modifiers.and(AccessFlag.SYNTHETIC) != 0
+      !(it.modifiers.and(AccessFlag.SYNTHETIC) != 0
           || it.modifiers.and(AccessFlag.ABSTRACT) != 0
           || it.modifiers.and(AccessFlag.NATIVE) != 0
           || it.modifiers.and(AccessFlag.INTERFACE) != 0
-          || !isMethodWithExpression(it)
+          || !isMethodWithExpression(it))
     }
         .forEach {
-          it.insertBefore(TRACE_START.format("trace_${it.name}"))
-          it.insertAfter(TRACE_END)
-          handled = true
+          try {
+            it.insertBefore(TRACE_START.format("trace_${ctClass.simpleName}_${it.name}"))
+            it.insertAfter(TRACE_END)
+            handled = true
+          } catch (exception: Exception) {
+            println("occur exception when handle ->${ctClass.name} ${it.name}")
+            exception.printStackTrace()
+          }
         }
     return handled
   }
