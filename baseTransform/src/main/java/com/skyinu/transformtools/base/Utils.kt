@@ -10,15 +10,20 @@ object Utils {
     targetFile: File,
     parentDir: File
   ): String {
-    return targetFile.absolutePath.substring(parentDir.absolutePath.length + 1)
+    var pre = targetFile.absolutePath.substring(parentDir.absolutePath.length + 1)
         .replace(File.separator, ".")
-        .replace(SUFFIX_CLASS, "")
+    if (pre.endsWith(SUFFIX_CLASS)) {
+      pre = pre.substring(0, pre.length - SUFFIX_CLASS.length)
+    }
+    return pre
   }
 
   fun retrieveClassNameForJarClass(jarClass: String): String {
-    return jarClass.replace(File.separator, ".")
-        .replace(SUFFIX_CLASS, "")
-        .replace("/", ".")
+    var pre = jarClass.replace(File.separator, ".")
+    if (pre.endsWith(SUFFIX_CLASS)) {
+      pre = pre.substring(0, pre.length - SUFFIX_CLASS.length)
+    }
+    return pre.replace("/", ".")
   }
 
   fun safeGetCtClass(
