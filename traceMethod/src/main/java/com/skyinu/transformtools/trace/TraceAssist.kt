@@ -22,8 +22,9 @@ class TraceAssist : ClassHandler {
     if (ctClass.isInterface) {
       return false
     }
-    val methods = ctClass.declaredMethods
     var handled = false
+    var occurError = false
+    val methods = ctClass.declaredMethods
     methods.filter {
       !(it.modifiers.and(AccessFlag.SYNTHETIC) != 0
           || it.modifiers.and(AccessFlag.ABSTRACT) != 0
@@ -37,11 +38,13 @@ class TraceAssist : ClassHandler {
             it.insertAfter(TRACE_END)
             handled = true
           } catch (exception: Exception) {
+            occurError = true
             println("occur exception when handle ->${ctClass.name} ${it.name}")
-            exception.printStackTrace()
+            println("error = ${exception.message}")
+            println("----------------------")
           }
         }
-    return handled
+    return handled && !occurError
   }
 
   private fun isMethodWithExpression(ctMethod: CtMethod?): Boolean {
