@@ -41,7 +41,7 @@ class TraceAssist : ClassHandler {
         .forEach {
           try {
             it.insertBefore(TRACE_START.format("trace_${ctClass.simpleName}_${it.name}"))
-            it.insertAfter(TRACE_END)
+            it.insertAfter(TRACE_END, false, ctClass.isKotlin)
             handled = true
           } catch (exception: Exception) {
             occurError = true
