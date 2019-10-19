@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         });
         catchTest();
         catchTest2();
+        new TestKt().test();
     }
 
     private String catchTest(){

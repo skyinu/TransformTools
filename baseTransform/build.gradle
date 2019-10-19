@@ -18,14 +18,14 @@ buildscript {
 dependencies {
   compileOnly gradleApi()
   implementation "com.android.tools.build:gradle:3.5.0"
-  implementation 'org.javassist:javassist:3.24.1-GA'
+  implementation 'org.javassist:javassist:3.26.0-GA'
 }
 
 publish {
   userOrg = 'skyinu'
   groupId = 'com.skyinu.transformtools'
   artifactId = 'basetranfrom'
-  publishVersion = '0.0.7'
+  publishVersion = '0.0.8'
   desc = 'transform tools'
   website = "https://github.com/skyinu/transformTools"
 }
