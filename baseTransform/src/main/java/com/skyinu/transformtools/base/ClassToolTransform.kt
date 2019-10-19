@@ -12,6 +12,7 @@ import com.android.build.api.transform.TransformOutputProvider
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.internal.pipeline.TransformManager
 import javassist.ClassPool
+import javassist.CtClass
 import org.gradle.api.Project
 import org.apache.commons.io.FileUtils
 import java.io.File
@@ -90,11 +91,14 @@ class ClassToolTransform(
       while (entry != null) {
         val entryName = entry.name
         targetFileOutS.putNextEntry(ZipEntry(entryName))
-        val className = Utils.retrieveClassNameForJarClass(entryName)
-        val rawClass = Utils.safeGetCtClass(mClassPool, className)
-        if (rawClass != null) {
-          if (rawClass.isFrozen) {
-            rawClass.defrost()
+        var rawClass: CtClass? = null
+        if (entryName.endsWith(Utils.SUFFIX_CLASS)) {
+          val className = Utils.retrieveClassNameForJarClass(entryName)
+          rawClass = Utils.safeGetCtClass(mClassPool, className)
+          if (rawClass != null) {
+            if (rawClass.isFrozen) {
+              rawClass.defrost()
+            }
           }
         }
         if (rawClass != null && mClassHandler?.travelClass(rawClass) == true) {

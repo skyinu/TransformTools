@@ -19,14 +19,14 @@ dependencies {
   compileOnly gradleApi()
   implementation "com.android.tools.build:gradle:3.5.0"
   implementation 'org.javassist:javassist:3.24.1-GA'
-  implementation 'com.skyinu.transformtools:basetranfrom:0.0.3'
+  implementation 'com.skyinu.transformtools:basetranfrom:0.0.7'
 }
 
 publish {
   userOrg = 'skyinu'
   groupId = 'com.skyinu.transformtools'
   artifactId = 'tracePlugin'
-  publishVersion = '0.0.8'
+  publishVersion = '0.0.12'
   desc = 'trace transform tools'
   website = "https://github.com/skyinu/transformTools"
 }

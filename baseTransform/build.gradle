@@ -25,7 +25,7 @@ publish {
   userOrg = 'skyinu'
   groupId = 'com.skyinu.transformtools'
   artifactId = 'basetranfrom'
-  publishVersion = '0.0.3'
+  publishVersion = '0.0.7'
   desc = 'transform tools'
   website = "https://github.com/skyinu/transformTools"
 }
