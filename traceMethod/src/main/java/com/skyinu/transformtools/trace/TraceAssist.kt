@@ -16,17 +16,11 @@ class TraceAssist : ClassHandler {
   companion object {
     const val TRACE_START = "android.os.Trace.beginSection(\"%s\");\n"
     const val TRACE_END = "android.os.Trace.endSection();\n"
-    val EXCLUDE_LIST = arrayListOf("kotlin.")
   }
 
   override fun travelClass(ctClass: CtClass): Boolean {
     if (ctClass.isInterface || ctClass.isAnnotation || ctClass.isEnum) {
       return false
-    }
-    EXCLUDE_LIST.forEach {
-      if (ctClass.packageName.startsWith(it)) {
-        return false
-      }
     }
     var handled = false
     var occurError = false

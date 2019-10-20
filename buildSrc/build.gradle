@@ -28,8 +28,8 @@ dependencies {
   implementation gradleApi()
   implementation localGroovy()
   implementation 'com.android.tools.build:gradle:3.3.1'
-  implementation 'org.javassist:javassist:3.24.1-GA'
-  implementation 'com.skyinu.transformtools:basetranfrom:0.0.3'
+  implementation 'org.javassist:javassist:3.26.0-GA'
+  implementation 'com.skyinu.transformtools:basetranfrom:0.0.8'
 }
 
 publish {
