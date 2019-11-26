@@ -26,7 +26,7 @@ publish {
   userOrg = 'skyinu'
   groupId = 'com.skyinu.transformtools'
   artifactId = 'tracePlugin'
-  publishVersion = '0.1.0'
+  publishVersion = '0.1.2'
   desc = 'trace transform tools'
   website = "https://github.com/skyinu/transformTools"
 }

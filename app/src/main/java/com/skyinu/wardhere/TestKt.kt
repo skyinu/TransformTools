@@ -2,21 +2,15 @@ package com.skyinu.wardhere
 
 import android.util.Log
 import android.view.View
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class TestKt {
   fun test() {
-    val a = 0
-    Log.e("TAG1", "a=$a")
-    View(null).setOnClickListener {
-      print("ddd")
-    }
-    when(a){
-      0->{
-        println("test")
-      }
-      1->{
-        print("dddd")
-      }
-    }
+   GlobalScope.launch {
+       delay(1000)
+   }
   }
 }

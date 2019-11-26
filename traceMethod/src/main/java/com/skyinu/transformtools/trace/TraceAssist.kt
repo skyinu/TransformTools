@@ -11,16 +11,35 @@ import javassist.expr.ExprEditor
 import javassist.expr.Handler
 import javassist.expr.MethodCall
 import javassist.expr.NewArray
+import org.gradle.api.Project
 
-class TraceAssist : ClassHandler {
+class TraceAssist(private val project: Project) : ClassHandler {
   companion object {
     const val TRACE_START = "android.os.Trace.beginSection(\"%s\");\n"
     const val TRACE_END = "android.os.Trace.endSection();\n"
+    val EXCLUDE_LIST = arrayListOf("kotlin.")
+  }
+
+  private val excludePackages = arrayListOf<String>()
+
+  init {
+    excludePackages.addAll(EXCLUDE_LIST)
+    val traceExtension = project.extensions.findByType(TraceExtension::class.java)
+    traceExtension?.let {
+      traceExtension.excludePackages?.let {
+        excludePackages.addAll(it)
+      }
+    }
   }
 
   override fun travelClass(ctClass: CtClass): Boolean {
     if (ctClass.isInterface || ctClass.isAnnotation || ctClass.isEnum) {
       return false
+    }
+    excludePackages.forEach {
+      if (ctClass.packageName.startsWith(it)) {
+        return false
+      }
     }
     var handled = false
     var occurError = false
