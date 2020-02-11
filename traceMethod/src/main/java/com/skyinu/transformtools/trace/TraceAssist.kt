@@ -37,7 +37,7 @@ class TraceAssist(private val project: Project) : ClassHandler {
       return false
     }
     excludePackages.forEach {
-      if (ctClass.packageName.startsWith(it)) {
+      if (safeGetPackageName(ctClass).startsWith(it)) {
         return false
       }
     }
@@ -104,5 +104,14 @@ class TraceAssist(private val project: Project) : ClassHandler {
       }
     })
     return isCallMethod
+  }
+
+  private fun safeGetPackageName(ctClass: CtClass):String{
+    try{
+      return ctClass.packageName
+    }catch (ex:Exception){
+      println("get package error $ctClass")
+    }
+    return ""
   }
 }
