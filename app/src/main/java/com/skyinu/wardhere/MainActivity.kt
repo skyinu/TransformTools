@@ -2,18 +2,12 @@ package com.skyinu.wardhere
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Debug
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
-import android.util.Log
-import android.view.View
 import android.view.Menu
 import android.view.MenuItem
+import com.google.gson.JsonSyntaxException
 import kotlinx.android.synthetic.main.activity_main.fab
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -30,7 +24,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
       val intent = Intent(this, SecondActivity::class.java)
       startActivity(intent)
     }
-
+    JsonSyntaxException("oh gson can't be found")
   }
 
   private fun catchTest(): String? {
