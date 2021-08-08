@@ -2,18 +2,18 @@ package com.skyinu.wardhere;
 
 import com.android.build.gradle.AppExtension;
 import com.android.build.gradle.api.ApplicationVariant;
+
+import net.lingala.zip4j.ZipFile;
+
 import org.gradle.api.Action;
 import org.gradle.api.DomainObjectSet;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.function.Consumer;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.JarOutputStream;
+
 
 public class ProguardJarFixTask {
     private Project project;
@@ -57,38 +57,36 @@ public class ProguardJarFixTask {
     }
 
     private void zipFix(File file) {
-        project.getLogger().info("start to process file = " + file.getAbsolutePath());
+        project.getLogger().error("start to process file = " + file.getAbsolutePath());
         try {
-            JarFile src = new JarFile(file);
             File destFile = new File(file.getParentFile(), file.getName() + ".bak");
-            JarOutputStream destOut = new JarOutputStream(new FileOutputStream(destFile));
-            src.stream().forEach(new Consumer<JarEntry>() {
-                @Override
-                public void accept(JarEntry jarEntry) {
-                    int count = 0;
-                    try {
-                        InputStream ins = src.getInputStream(jarEntry);
-                        destOut.putNextEntry(jarEntry);
-                        byte[] buffer = new byte[2048];
-                        int length;
-                        while ((length = ins.read(buffer)) >= 0) {
-                            destOut.write(buffer, 0, length);
-                            count += length;
-                        }
-                    } catch (IOException e) {
-                        project.getLogger().error(jarEntry.getName() + " "
-                                + jarEntry.getSize() + " "
-                                + jarEntry.getCompressedSize() + " "
-                                + count + " "
-                                + e.getMessage());
-                    }
-                }
-            });
-            destOut.flush();
-            file.delete();
-            destFile.renameTo(file);
+            File destFolder = new File(file.getParentFile(), file.getName() + "_bak");
+            ensureFolderEmpty(destFolder);
+            ZipFile src = new ZipFile(file);
+            src.extractAll(destFolder.getAbsolutePath());
+            ZipFile destZip = new ZipFile(destFile.getAbsolutePath());
+            destZip.addFolder(destFolder);
+            destZip.close();
+            boolean deleteResult = file.delete();
+            destFolder.delete();
+            boolean result = destFile.renameTo(file);
+            project.getLogger().error("process end with " + deleteResult + " and " + result);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void ensureFolderEmpty(File destFolder) {
+        if (destFolder.exists()) {
+            destFolder.delete();
+        }
+        destFolder.mkdir();
+    }
+
+    private void ensureFile(File destFile) throws IOException {
+        if (destFile.exists()) {
+            destFile.delete();
+        }
+        destFile.createNewFile();
     }
 }
