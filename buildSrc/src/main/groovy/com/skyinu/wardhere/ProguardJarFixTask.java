@@ -65,11 +65,11 @@ public class ProguardJarFixTask {
             File destFile = new File(file.getParentFile(), file.getName() + ".bak");
             File destFolder = new File(file.getParentFile(), file.getName() + "_bak");
             ensureFolderEmpty(destFolder);
-            com.ZipUtils.unZip(file, destFolder.getAbsolutePath());
+            ZipUtils.unZip(file, destFolder.getAbsolutePath());
             Collection<File> srcFiles = FileUtils.listFiles(destFolder, null, true);
 //            ZipUtils.toZip(srcFiles, destFolder.getAbsolutePath(), new FileOutputStream(destFile));
             ZipOutputStream destOut = new ZipOutputStream(new FileOutputStream(destFile));
-            com.ZipUtils.zipFile(destOut, destFolder, "");
+            ZipUtils.zipFile(destOut, destFolder, "");
             IOUtils.closeQuietly(destOut);
             boolean deleteSrcResult = file.delete();
             FileUtils.deleteDirectory(destFolder);
