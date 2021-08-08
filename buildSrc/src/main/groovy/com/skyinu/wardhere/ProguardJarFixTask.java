@@ -3,8 +3,11 @@ package com.skyinu.wardhere;
 import com.android.build.gradle.AppExtension;
 import com.android.build.gradle.api.ApplicationVariant;
 
-import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.model.ZipParameters;
 
+import org.apache.commons.io.FileUtils;
 import org.gradle.api.Action;
 import org.gradle.api.DomainObjectSet;
 import org.gradle.api.Project;
@@ -65,13 +68,19 @@ public class ProguardJarFixTask {
             ZipFile src = new ZipFile(file);
             src.extractAll(destFolder.getAbsolutePath());
             ZipFile destZip = new ZipFile(destFile.getAbsolutePath());
-            destZip.addFolder(destFolder);
-            destZip.close();
-            boolean deleteResult = file.delete();
-            destFolder.delete();
+            for (File item : destFolder.listFiles()) {
+                if (item.isDirectory()) {
+                    destZip.addFolder(item.getAbsolutePath(), new ZipParameters());
+                } else {
+                    destZip.addFile(item, new ZipParameters());
+                }
+            }
+            boolean deleteSrcResult = file.delete();
+            FileUtils.deleteDirectory(destFolder);
             boolean result = destFile.renameTo(file);
-            project.getLogger().error("process end with " + deleteResult + " and " + result);
-        } catch (IOException e) {
+            project.getLogger().error("process end with " + deleteSrcResult
+                    + " and " + result);
+        } catch (ZipException | IOException e) {
             e.printStackTrace();
         }
     }
