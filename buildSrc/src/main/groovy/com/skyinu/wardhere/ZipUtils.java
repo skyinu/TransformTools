@@ -1,6 +1,12 @@
 package com.skyinu.wardhere;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
@@ -10,13 +16,6 @@ import java.util.zip.ZipOutputStream;
 public class ZipUtils {
     private static final int BUFFER_SIZE = 2 * 1024;
 
-    /**
-     * zip解压
-     *
-     * @param srcFile     zip源文件
-     * @param destDirPath 解压后的目标文件夹
-     * @throws RuntimeException 解压失败会抛出运行时异常
-     */
     public static void unZip(File srcFile, String destDirPath) throws RuntimeException {
         if (!srcFile.exists()) {
             throw new RuntimeException(srcFile.getPath() + "所指文件不存在");
@@ -70,6 +69,34 @@ public class ZipUtils {
         }
     }
 
+    public static void zipFile(ZipOutputStream zip, File file, String dir) throws Exception {
+        //如果当前的是文件夹，则进行进一步处理
+        if (file.isDirectory()) {
+            //得到文件列表信息
+            File[] fileArray = file.listFiles();
+            if (fileArray == null) {
+                return;
+            }
+            //将文件夹添加到下一级打包目录
+            zip.putNextEntry(new ZipEntry(dir + "/"));
+            dir = dir.length() == 0 ? "" : dir + "/";
+            //递归将文件夹中的文件打包
+            for (File f : fileArray) {
+                zipFile(zip, f, dir + f.getName());
+            }
+        } else {
+            //当前的是文件，打包处理
+            //文件输入流
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+            ZipEntry entry = new ZipEntry(dir);
+            zip.putNextEntry(entry);
+            zip.write(FileUtils.readFileToByteArray(file));
+            IOUtils.closeQuietly(bis);
+            zip.flush();
+            zip.closeEntry();
+        }
+    }
+
     /**
      * 压缩成ZIP 方法
      *
@@ -79,11 +106,17 @@ public class ZipUtils {
     public static void toZip(Collection<File> srcFiles, String root, OutputStream out) {
         long start = System.currentTimeMillis();
         ZipOutputStream zos = null;
+        Path rootPath = Paths.get(root);
         try {
             zos = new ZipOutputStream(out);
             for (File srcFile : srcFiles) {
                 byte[] buf = new byte[BUFFER_SIZE];
-                zos.putNextEntry(new ZipEntry(srcFile.getAbsolutePath().substring(root.length())));
+                Path srcPath = Paths.get(srcFile.getAbsolutePath());
+                String entryName = rootPath.relativize(srcPath).toString();
+                if (!entryName.endsWith(".class")) {
+                    System.out.println("compress " + entryName);
+                }
+                zos.putNextEntry(new ZipEntry(entryName));
                 int len;
                 FileInputStream in = new FileInputStream(srcFile);
                 while ((len = in.read(buf)) != -1) {

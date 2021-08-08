@@ -2,7 +2,9 @@ package com.skyinu.wardhere;
 
 import com.android.build.gradle.AppExtension;
 import com.android.build.gradle.api.ApplicationVariant;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.gradle.api.Action;
 import org.gradle.api.DomainObjectSet;
 import org.gradle.api.Project;
@@ -13,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.function.Consumer;
+import java.util.zip.ZipOutputStream;
 
 
 public class ProguardJarFixTask {
@@ -62,15 +65,18 @@ public class ProguardJarFixTask {
             File destFile = new File(file.getParentFile(), file.getName() + ".bak");
             File destFolder = new File(file.getParentFile(), file.getName() + "_bak");
             ensureFolderEmpty(destFolder);
-            ZipUtils.unZip(file, destFolder.getAbsolutePath());
+            com.ZipUtils.unZip(file, destFolder.getAbsolutePath());
             Collection<File> srcFiles = FileUtils.listFiles(destFolder, null, true);
-            ZipUtils.toZip(srcFiles, destFolder.getAbsolutePath(), new FileOutputStream(destFile));
+//            ZipUtils.toZip(srcFiles, destFolder.getAbsolutePath(), new FileOutputStream(destFile));
+            ZipOutputStream destOut = new ZipOutputStream(new FileOutputStream(destFile));
+            com.ZipUtils.zipFile(destOut, destFolder, "");
+            IOUtils.closeQuietly(destOut);
             boolean deleteSrcResult = file.delete();
             FileUtils.deleteDirectory(destFolder);
             boolean result = destFile.renameTo(file);
             project.getLogger().error("process end with " + deleteSrcResult
                     + " and " + result);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
