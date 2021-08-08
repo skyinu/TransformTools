@@ -1,7 +1,6 @@
 package com.skyinu.wardhere.dependence;
 
-import net.lingala.zip4j.core.ZipFile;
-
+import net.lingala.zip4j.ZipFile;
 import java.io.File;
 import javax.inject.Inject;
 import org.gradle.api.artifacts.transform.InputArtifact;

@@ -1,12 +1,11 @@
 package com.skyinu.wardhere;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 public class ZipUtils {
     private static final int BUFFER_SIZE = 2 * 1024;
@@ -19,18 +18,18 @@ public class ZipUtils {
      * @throws RuntimeException 解压失败会抛出运行时异常
      */
     public static void unZip(File srcFile, String destDirPath) throws RuntimeException {
-        // 判断源文件是否存在
         if (!srcFile.exists()) {
             throw new RuntimeException(srcFile.getPath() + "所指文件不存在");
         }
-        // 开始解压
         ZipFile zipFile = null;
         try {
             zipFile = new ZipFile(srcFile);
             Enumeration<?> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = (ZipEntry) entries.nextElement();
-                System.out.println("解压" + entry.getName());
+                if (!entry.getName().endsWith(".class")) {
+                    System.out.println("解压" + entry.getName());
+                }
                 // 如果是文件夹，就创建个文件夹
                 if (entry.isDirectory()) {
                     String dirPath = destDirPath + "/" + entry.getName();
@@ -65,6 +64,43 @@ public class ZipUtils {
                 try {
                     zipFile.close();
                 } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * 压缩成ZIP 方法
+     *
+     * @param srcFiles 需要压缩的文件列表
+     * @param out      压缩文件输出流
+     */
+    public static void toZip(Collection<File> srcFiles, String root, OutputStream out) {
+        long start = System.currentTimeMillis();
+        ZipOutputStream zos = null;
+        try {
+            zos = new ZipOutputStream(out);
+            for (File srcFile : srcFiles) {
+                byte[] buf = new byte[BUFFER_SIZE];
+                zos.putNextEntry(new ZipEntry(srcFile.getAbsolutePath().substring(root.length())));
+                int len;
+                FileInputStream in = new FileInputStream(srcFile);
+                while ((len = in.read(buf)) != -1) {
+                    zos.write(buf, 0, len);
+                }
+                zos.closeEntry();
+                in.close();
+            }
+            long end = System.currentTimeMillis();
+            System.out.println("压缩完成，耗时：" + (end - start) + " ms");
+        } catch (Exception e) {
+            throw new RuntimeException("zip error from ZipUtils", e);
+        } finally {
+            if (zos != null) {
+                try {
+                    zos.close();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
