@@ -2,15 +2,14 @@ package com.skyinu.wardhere;
 
 import com.android.build.gradle.AppExtension;
 import com.android.build.gradle.api.ApplicationVariant;
-
 import org.gradle.api.Action;
 import org.gradle.api.DomainObjectSet;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.function.Consumer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -66,10 +65,22 @@ public class ProguardJarFixTask {
             src.stream().forEach(new Consumer<JarEntry>() {
                 @Override
                 public void accept(JarEntry jarEntry) {
+                    int count = 0;
                     try {
+                        InputStream ins = src.getInputStream(jarEntry);
                         destOut.putNextEntry(jarEntry);
+                        byte[] buffer = new byte[2048];
+                        int length;
+                        while ((length = ins.read(buffer)) >= 0) {
+                            destOut.write(buffer, 0, length);
+                            count += length;
+                        }
                     } catch (IOException e) {
-                        project.getLogger().error(jarEntry.getName() + " " + jarEntry.getSize() + " " + e.getMessage());
+                        project.getLogger().error(jarEntry.getName() + " "
+                                + jarEntry.getSize() + " "
+                                + jarEntry.getCompressedSize() + " "
+                                + count + " "
+                                + e.getMessage());
                     }
                 }
             });
