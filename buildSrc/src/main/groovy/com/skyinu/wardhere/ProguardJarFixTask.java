@@ -65,8 +65,7 @@ public class ProguardJarFixTask {
             File destFile = new File(file.getParentFile(), file.getName() + ".bak");
             File destFolder = new File(file.getParentFile(), file.getName() + "_bak");
             ensureFolderEmpty(destFolder);
-            ZipFile src = new ZipFile(file);
-            src.extractAll(destFolder.getAbsolutePath());
+            ZipUtils.unZip(file, destFolder.getAbsolutePath());
             ZipFile destZip = new ZipFile(destFile.getAbsolutePath());
             for (File item : destFolder.listFiles()) {
                 if (item.isDirectory()) {
@@ -90,12 +89,5 @@ public class ProguardJarFixTask {
             destFolder.delete();
         }
         destFolder.mkdir();
-    }
-
-    private void ensureFile(File destFile) throws IOException {
-        if (destFile.exists()) {
-            destFile.delete();
-        }
-        destFile.createNewFile();
     }
 }
