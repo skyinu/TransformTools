@@ -32,8 +32,8 @@ afterEvaluate {
       }
       debug(MavenPublication) {
         from components.debug
-        groupId = 'com.github.skyinu'
-        artifactId = 'vm_eraser'
+        groupId = 'com.skyinu.transformtools'
+        artifactId = 'basetranfrom'
         version = '0.1.0-snapshot'
       }
     }
