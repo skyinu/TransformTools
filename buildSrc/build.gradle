@@ -1,5 +1,5 @@
 apply plugin: 'groovy'
-apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'maven-publish'
 buildscript {
   repositories {
     maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
@@ -10,7 +10,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.4.2'
+    classpath 'com.android.tools.build:gradle:3.6.4'
     classpath 'com.novoda:bintray-release:0.9'
   }
 }
@@ -26,17 +26,25 @@ repositories {
 dependencies {
   implementation gradleApi()
   implementation localGroovy()
-  implementation 'com.android.tools.build:gradle:3.3.1'
+  implementation 'com.android.tools.build:gradle:3.6.4'
   implementation 'org.javassist:javassist:3.26.0-GA'
   implementation 'com.skyinu.transformtools:basetranfrom:0.0.8'
   implementation 'net.lingala.zip4j:zip4j:2.5.1'
 }
 
-publish {
-  userOrg = 'skyinu'
-  groupId = 'com.skyinu'
-  artifactId = 'wardhere-plugin'
-  publishVersion = '0.2.0'
-  desc = 'a gradle plugin to add log to try catch expression'
-  website = "https://github.com/skyinu/PrintException"
+afterEvaluate {
+  publishing {
+    publications {
+      release(MavenPublication) {
+        groupId = 'com.github.skyinu'
+        artifactId = 'wardhere-plugin'
+        version = '0.3.0'
+      }
+      debug(MavenPublication) {
+        groupId = 'com.github.skyinu'
+        artifactId = 'wardhere-plugin'
+        version = '0.3.0-snapshot'
+      }
+    }
+  }
 }

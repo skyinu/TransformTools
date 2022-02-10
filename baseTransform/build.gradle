@@ -13,21 +13,19 @@ buildscript {
 
 dependencies {
   compileOnly gradleApi()
-  implementation "com.android.tools.build:gradle:3.5.0"
+  implementation "com.android.tools.build:gradle:3.6.4"
   implementation 'org.javassist:javassist:3.26.0-GA'
 }
 afterEvaluate {
   publishing {
     publications {
       release(MavenPublication) {
-        from components.release
-        groupId = 'com.skyinu.transformtools'
+        groupId = 'com.github.skyinu'
         artifactId = 'basetranfrom'
         version = '0.1.0'
       }
       debug(MavenPublication) {
-        from components.debug
-        groupId = 'com.skyinu.transformtools'
+        groupId = 'com.github.skyinu'
         artifactId = 'basetranfrom'
         version = '0.1.0-snapshot'
       }
