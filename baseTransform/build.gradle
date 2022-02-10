@@ -1,6 +1,7 @@
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'kotlin'
 apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'maven-publish'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -20,12 +21,21 @@ dependencies {
   implementation "com.android.tools.build:gradle:3.5.0"
   implementation 'org.javassist:javassist:3.26.0-GA'
 }
-
-publish {
-  userOrg = 'skyinu'
-  groupId = 'com.skyinu.transformtools'
-  artifactId = 'basetranfrom'
-  publishVersion = '0.0.8'
-  desc = 'transform tools'
-  website = "https://github.com/skyinu/transformTools"
+afterEvaluate {
+  publishing {
+    publications {
+      release(MavenPublication) {
+        from components.release
+        groupId = 'com.skyinu.transformtools'
+        artifactId = 'basetranfrom'
+        version = '0.1.0'
+      }
+      debug(MavenPublication) {
+        from components.debug
+        groupId = 'com.github.skyinu'
+        artifactId = 'vm_eraser'
+        version = '0.1.0-snapshot'
+      }
+    }
+  }
 }
