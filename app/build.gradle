@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
-//apply plugin: 'com.skyinu.wardhere'
-//apply plugin: 'com.skyinu.transform.traceplugin'
+apply plugin: 'com.skyinu.wardhere'
+apply plugin: 'com.skyinu.transform.traceplugin'
 
 android {
   compileSdkVersion 28
