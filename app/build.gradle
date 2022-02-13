@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.skyinu.wardhere'
-apply plugin: 'com.skyinu.transform.traceplugin'
+//apply plugin: 'com.skyinu.wardhere'
+//apply plugin: 'com.skyinu.transform.traceplugin'
 
 android {
   compileSdkVersion 28
@@ -15,7 +15,7 @@ android {
   }
   buildTypes {
     release {
-      minifyEnabled true
+      minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
     }
   }
@@ -31,23 +31,23 @@ dependencies {
   implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2'
   implementation 'com.google.code.gson:gson:2.8.6'
 }
-wardHere {
-  dumpAble true
-  dumpDir "${project.buildDir}${File.separator}dumpDir"
-  exceptionTag "error"
-  plain false
-  injectCode {
-    classPath = "com.skyinu.wardhere.MainActivity"
-    lineNumber = 25
-    code =  "android.util.Log.e(\"tag\", \"error \" + \"tag\");"
-  }
-
-  injectCode {
-    classPath = "com.skyinu.wardhere.MainActivity"
-    lineNumber = 37
-    code =  "android.util.Log.e(\"tag\", \"37 \" + \"tag\");"
-  }
-}
+//wardHere {
+//  dumpAble true
+//  dumpDir "${project.buildDir}${File.separator}dumpDir"
+//  exceptionTag "error"
+//  plain false
+//  injectCode {
+//    classPath = "com.skyinu.wardhere.MainActivity"
+//    lineNumber = 25
+//    code =  "android.util.Log.e(\"tag\", \"error \" + \"tag\");"
+//  }
+//
+//  injectCode {
+//    classPath = "com.skyinu.wardhere.MainActivity"
+//    lineNumber = 37
+//    code =  "android.util.Log.e(\"tag\", \"37 \" + \"tag\");"
+//  }
+//}
 repositories {
   mavenCentral()
 }
