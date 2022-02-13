@@ -16,19 +16,14 @@ dependencies {
   implementation "com.android.tools.build:gradle:3.6.4"
   implementation 'org.javassist:javassist:3.26.0-GA'
 }
-afterEvaluate {
-  publishing {
-    publications {
-      release(MavenPublication) {
-        groupId = 'com.github.skyinu'
-        artifactId = 'basetranfrom'
-        version = '0.1.0'
-      }
-      debug(MavenPublication) {
-        groupId = 'com.github.skyinu'
-        artifactId = 'basetranfrom'
-        version = '0.1.0-snapshot'
-      }
+
+publishing {
+  publications {
+    maven(MavenPublication) {
+      from components.java
+      groupId = 'com.github.skyinu'
+      artifactId = 'basetranfrom'
+      version = '0.3.0'
     }
   }
 }

@@ -1,50 +1,44 @@
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
 buildscript {
-  repositories {
+    repositories {
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        mavenCentral()
+        jcenter()
+        maven { url 'https://jitpack.io' }
+        google()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.6.4'
+        classpath 'com.novoda:bintray-release:0.9'
+    }
+}
+
+repositories {
     maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
     mavenCentral()
     jcenter()
     maven { url 'https://jitpack.io' }
     google()
-  }
-
-  dependencies {
-    classpath 'com.android.tools.build:gradle:3.6.4'
-    classpath 'com.novoda:bintray-release:0.9'
-  }
-}
-
-repositories {
-  maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-  mavenCentral()
-  jcenter()
-  maven { url 'https://jitpack.io' }
-  google()
 }
 
 dependencies {
-  implementation gradleApi()
-  implementation localGroovy()
-  implementation 'com.android.tools.build:gradle:3.6.4'
-  implementation 'org.javassist:javassist:3.26.0-GA'
-  implementation 'com.skyinu.transformtools:basetranfrom:0.0.8'
-  implementation 'net.lingala.zip4j:zip4j:2.5.1'
+    implementation gradleApi()
+    implementation localGroovy()
+    implementation 'com.android.tools.build:gradle:3.6.4'
+    implementation 'org.javassist:javassist:3.26.0-GA'
+    implementation 'com.skyinu.transformtools:basetranfrom:0.0.8'
+    implementation 'net.lingala.zip4j:zip4j:2.5.1'
 }
 
-afterEvaluate {
-  publishing {
+publishing {
     publications {
-      release(MavenPublication) {
-        groupId = 'com.github.skyinu'
-        artifactId = 'wardhere-plugin'
-        version = '0.3.0'
-      }
-      debug(MavenPublication) {
-        groupId = 'com.github.skyinu'
-        artifactId = 'wardhere-plugin'
-        version = '0.3.0-snapshot'
-      }
+        maven(MavenPublication) {
+            from components.java
+            groupId = 'com.github.skyinu'
+            artifactId = 'wardhere-plugin'
+            version = '0.3.0'
+        }
     }
-  }
 }

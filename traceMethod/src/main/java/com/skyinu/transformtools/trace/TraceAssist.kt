@@ -13,7 +13,7 @@ import javassist.expr.MethodCall
 import javassist.expr.NewArray
 import org.gradle.api.Project
 
-class TraceAssist(private val project: Project) : ClassHandler {
+class TraceAssist(project: Project) : ClassHandler {
   companion object {
     const val TRACE_START = "android.os.Trace.beginSection(\"%s\");\n"
     const val TRACE_END = "android.os.Trace.endSection();\n"
@@ -56,9 +56,9 @@ class TraceAssist(private val project: Project) : ClassHandler {
             it.insertBefore(TRACE_START.format("trace_${ctClass.simpleName}_${it.name}"))
             it.insertAfter(TRACE_END, false, ctClass.isKotlin)
             handled = true
-          } catch (exception: Exception) {
+          } catch (exception: Throwable) {
             occurError = true
-            println("occur exception when handle ->${ctClass.name} ${it.name}")
+            println("${CtClass.version} occur exception when handle ->${ctClass.name} ${it.name}")
             println("error = ${exception.message ?: exception.cause?.message}")
             println("----------------------")
           }
