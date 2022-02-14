@@ -33,13 +33,14 @@ class TraceAssist(project: Project) : ClassHandler {
   }
 
   override fun travelClass(ctClass: CtClass): Boolean {
-    if (ctClass.isInterface || ctClass.isAnnotation || ctClass.isEnum) {
-      return false
-    }
+    val packageName = safeGetPackageName(ctClass)
     excludePackages.forEach {
-      if (safeGetPackageName(ctClass).startsWith(it)) {
+      if (packageName.isEmpty() || packageName.startsWith(it)) {
         return false
       }
+    }
+    if (ctClass.isInterface || ctClass.isAnnotation || ctClass.isEnum) {
+      return false
     }
     var handled = false
     var occurError = false
