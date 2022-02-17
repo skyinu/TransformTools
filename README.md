@@ -75,7 +75,7 @@ wardHere{
 
 ## debug
 
-gradlew :app:assemble -Dorg.gradle.debug=true  --no-daemon
+gradlew :app:assembleDebug -Dorg.gradle.debug=true  --no-daemon
 
 ## extra
 

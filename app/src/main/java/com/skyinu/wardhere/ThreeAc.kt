@@ -7,7 +7,7 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 
-class SecondActivity : Activity(){
+class ThreeAc : Activity(){
     private var byteArray = ByteArray(1)
     private var count  = 1
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,8 +17,7 @@ class SecondActivity : Activity(){
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         byteArray = ByteArray(1024*1024*10*count++)
         Log.e("TAG1","deDEDE")
-        val intent = Intent(this, ThreeAc::class.java)
-        startActivity(intent)
+
         return super.onTouchEvent(event)
     }
 
