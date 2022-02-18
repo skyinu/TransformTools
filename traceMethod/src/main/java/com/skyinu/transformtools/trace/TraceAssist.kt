@@ -104,9 +104,6 @@ class TraceAssist(project: Project) : ClassHandler {
 
     private fun shouldFilterClass(ctClass: CtClass): Boolean {
         try {
-           if (!ctClass.name.endsWith(CLASS_FILE_SUFFIX)) {
-            return true
-            }
         val packageName = ctClass.packageName
         excludePackages.forEach {
             if (packageName.isEmpty() || packageName.startsWith(it)) {
