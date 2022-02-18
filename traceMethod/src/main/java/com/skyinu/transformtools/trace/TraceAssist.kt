@@ -103,7 +103,7 @@ class TraceAssist(project: Project) : ClassHandler {
     }
 
     private fun shouldFilterClass(ctClass: CtClass): Boolean {
-        try｛
+        try {
            if (!ctClass.name.endsWith(CLASS_FILE_SUFFIX)) {
             return true
             }
@@ -115,8 +115,8 @@ class TraceAssist(project: Project) : ClassHandler {
         }
         if (ctClass.isInterface || ctClass.isAnnotation || ctClass.isEnum) {
             return true
-        }
-｝catch (ex: Exception) {
+        } }
+catch (ex: Exception) {
             println(" error $ctClass")
             return true
         }
