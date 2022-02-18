@@ -114,7 +114,7 @@ class TraceAssist(project: Project) : ClassHandler {
             return true
         } }
 catch (ex: Exception) {
-            println(" error $ctClass")
+            println(" error $ex")
             return true
         }
         return false
