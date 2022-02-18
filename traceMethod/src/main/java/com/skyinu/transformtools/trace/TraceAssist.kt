@@ -103,21 +103,21 @@ class TraceAssist(project: Project) : ClassHandler {
     }
 
     private fun shouldFilterClass(ctClass: CtClass): Boolean {
-        if (!ctClass.name.endsWith(CLASS_FILE_SUFFIX)) {
+        try｛
+           if (!ctClass.name.endsWith(CLASS_FILE_SUFFIX)) {
             return true
-        }
-        val packageName = try {
-            ctClass.packageName
-        } catch (ex: Exception) {
-            println("get package error $ctClass")
-            ""
-        }
+            }
+        val packageName = ctClass.packageName
         excludePackages.forEach {
             if (packageName.isEmpty() || packageName.startsWith(it)) {
                 return true
             }
         }
         if (ctClass.isInterface || ctClass.isAnnotation || ctClass.isEnum) {
+            return true
+        }
+｝catch (ex: Exception) {
+            println(" error $ctClass")
             return true
         }
         return false
