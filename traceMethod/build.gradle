@@ -1,3 +1,5 @@
+import com.skyinu.wardhere.Dep
+
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'kotlin'
 apply plugin: 'maven-publish'
@@ -21,8 +23,8 @@ publishing {
   publications {
     maven(MavenPublication) {
       from components.java
-      groupId project.group
-      version project.version
+      groupId Dep.GROUP
+      version Dep.RELEASE_VERSION
       artifactId = 'TransformTools'
     }
   }

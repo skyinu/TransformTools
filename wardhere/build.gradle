@@ -1,3 +1,5 @@
+import com.skyinu.wardhere.Dep
+
 apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
@@ -11,8 +13,8 @@ publishing {
         maven(MavenPublication) {
             from components.java
             artifactId = 'wardHere'
-            groupId project.group
-            version project.version
+            groupId Dep.GROUP
+            version Dep.RELEASE_VERSION
         }
     }
 }
