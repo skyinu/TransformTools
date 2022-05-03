@@ -15,15 +15,15 @@ dependencies {
   compileOnly gradleApi()
   implementation "com.android.tools.build:gradle:3.6.4"
   implementation 'org.javassist:javassist:3.28.0-GA'
-  implementation 'com.skyinu.transformtools:basetranfrom:0.0.8'
+  implementation 'com.github.skyinu.TransformTools:basetranfrom:0.3.9'
 }
 publishing {
   publications {
     maven(MavenPublication) {
       from components.java
-      groupId = 'com.github.skyinu'
+      groupId project.group
+      version project.version
       artifactId = 'TransformTools'
-      version = '0.3.0'
     }
   }
 }
