@@ -12,25 +12,30 @@ import javassist.expr.Handler
 import javassist.expr.MethodCall
 import javassist.expr.NewArray
 import org.gradle.api.Project
+import java.io.File
 
 class TraceAssist(project: Project) : ClassHandler {
     companion object {
         const val TRACE_START = "android.os.Trace.beginSection(\"%s\");\n"
         const val TRACE_END = "android.os.Trace.endSection();\n"
         val EXCLUDE_LIST = arrayListOf("kotlin.")
-        private const val CLASS_FILE_SUFFIX = ".class"
     }
 
     private val excludePackages = arrayListOf<String>()
+    private val mapFile = File(project.buildDir, "trace_map.txt")
+    private var maxLength = 127
+
 
     init {
         excludePackages.addAll(EXCLUDE_LIST)
         val traceExtension = project.extensions.findByType(TraceExtension::class.java)
-        traceExtension?.let {
+        traceExtension?.let { extension ->
+            maxLength = extension.maxTagLength ?: 127
             traceExtension.excludePackages?.let {
                 excludePackages.addAll(it)
             }
         }
+
     }
 
     override fun travelClass(ctClass: CtClass): Boolean {
@@ -49,7 +54,11 @@ class TraceAssist(project: Project) : ClassHandler {
         }
             .forEach {
                 try {
-                    it.insertBefore(TRACE_START.format("trace_${ctClass.simpleName}_${it.name}"))
+                    var tag = "${ctClass.simpleName}_${it.name}"
+                    if (tag.length >= 125) {
+                        tag = tag.substring(tag.length - 125 + 1)
+                    }
+                    it.insertBefore(TRACE_START.format("f_$tag"))
                     it.insertAfter(TRACE_END, false, ctClass.isKotlin)
                     handled = true
                 } catch (exception: Throwable) {
@@ -104,16 +113,16 @@ class TraceAssist(project: Project) : ClassHandler {
 
     private fun shouldFilterClass(ctClass: CtClass): Boolean {
         try {
-        val packageName = ctClass.packageName
-        excludePackages.forEach {
-            if (packageName.isEmpty() || packageName.startsWith(it)) {
+            val packageName = ctClass.packageName
+            excludePackages.forEach {
+                if (packageName.isEmpty() || packageName.startsWith(it)) {
+                    return true
+                }
+            }
+            if (ctClass.isInterface || ctClass.isAnnotation || ctClass.isEnum) {
                 return true
             }
-        }
-        if (ctClass.isInterface || ctClass.isAnnotation || ctClass.isEnum) {
-            return true
-        } }
-catch (ex: Exception) {
+        } catch (ex: Exception) {
             println(" error $ex")
             return true
         }

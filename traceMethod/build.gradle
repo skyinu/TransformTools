@@ -16,8 +16,8 @@ buildscript {
 dependencies {
   compileOnly gradleApi()
   implementation "com.android.tools.build:gradle:3.6.4"
-  implementation 'org.javassist:javassist:3.28.0-GA'
-  implementation 'com.github.skyinu.TransformTools:basetranfrom:0.3.9'
+  implementation 'org.javassist:javassist:3.29.1-GA'
+  implementation 'com.github.skyinu.BaseTransLib:basetranfrom:0.5.1'
 }
 publishing {
   publications {
