@@ -23,6 +23,7 @@ class TraceAssist(project: Project) : ClassHandler {
 
     private val excludePackages = arrayListOf<String>()
     private val mapFile = File(project.buildDir, "trace_map.txt")
+    private var methodId = 0L
     private var maxLength = 127
 
 
@@ -56,7 +57,9 @@ class TraceAssist(project: Project) : ClassHandler {
                 try {
                     var tag = "${ctClass.simpleName}_${it.name}"
                     if (tag.length >= 125) {
-                        tag = tag.substring(tag.length - 125 + 1)
+                        mapFile.writeText("$tag -> $methodId\n")
+                        tag = methodId.toString()
+                        methodId++
                     }
                     it.insertBefore(TRACE_START.format("f_$tag"))
                     it.insertAfter(TRACE_END, false, ctClass.isKotlin)
