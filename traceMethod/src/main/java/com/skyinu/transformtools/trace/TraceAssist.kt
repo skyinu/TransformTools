@@ -62,7 +62,7 @@ class TraceAssist(project: Project) : ClassHandler {
                         methodId++
                     }
                     it.insertBefore(TRACE_START.format("f_$tag"))
-                    it.insertAfter(TRACE_END, false, ctClass.isKotlin)
+                    it.insertAfter(TRACE_END, true, ctClass.isKotlin)
                     handled = true
                 } catch (exception: Throwable) {
                     occurError = true
