@@ -2,6 +2,7 @@ package com.skyinu.wardhere
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -13,6 +14,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 import java.io.File
+import java.util.concurrent.SynchronousQueue
 
 class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
@@ -21,6 +23,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     setContentView(R.layout.activity_main)
     TestKt().test()
     fab.setOnClickListener {
+      val queue = SynchronousQueue<String>()
+      Log.e("TAG1", "add element = " + queue.offer("new"))
       val intent = Intent(this, SecondActivity::class.java)
       startActivity(intent)
     }
