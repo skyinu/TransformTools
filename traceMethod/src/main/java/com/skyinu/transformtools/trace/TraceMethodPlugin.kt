@@ -20,7 +20,7 @@ class TraceMethodPlugin : Plugin<Project> {
     appPlugin?.let {
       val transform = ClassToolTransform(project, "trace")
       transform.regiesterClassHandler(TraceAssist(project))
-      it.extension.registerTransform(transform)
+      it.getExtension().registerTransform(transform)
     }
   }
 }

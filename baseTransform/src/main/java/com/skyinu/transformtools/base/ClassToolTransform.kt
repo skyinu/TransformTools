@@ -126,7 +126,7 @@ class ClassToolTransform(
         mClassPool.appendSystemPath()
         val appPlugin = mProject.plugins.findPlugin(AppPlugin::class.java)
         appPlugin?.let {
-            mClassPool.appendClassPath(it.extension.bootClasspath[0].path)
+            mClassPool.appendClassPath(it.getExtension().bootClasspath[0].path)
         }
     }
 
