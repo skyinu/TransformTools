@@ -1,1 +1,1 @@
-include ':app',':buildSrc', ':traceMethod'
+include ':app', ':traceMethod',':baseTransform'

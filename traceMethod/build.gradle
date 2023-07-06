@@ -6,17 +6,11 @@ apply plugin: 'maven-publish'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
-buildscript {
-  repositories {
-    mavenCentral()
-    jcenter()
-  }
-}
 
 dependencies {
   compileOnly gradleApi()
-  implementation "com.android.tools.build:gradle:3.6.4"
-  implementation 'org.javassist:javassist:3.29.1-GA'
+  implementation "com.android.tools.build:gradle:4.2.2"
+  implementation 'org.javassist:javassist:3.29.2-GA'
   implementation 'com.github.skyinu.BaseTransLib:basetranfrom:0.5.1'
 }
 publishing {
